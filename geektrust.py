@@ -3,6 +3,7 @@ from collections import defaultdict
 
 NUMBER_OF_ALPHABETS = 26
 ASCII_VAL_OF_A = 65
+MIN_REQUIRED_TO_BE_RULER = 3
 
 kingdom_animal_map = {"SPACE": "GORILLA",
                       "LAND": "PANDA",
@@ -71,15 +72,13 @@ def solveGoldenCrown(input_file):
             message = ''.join(input[1:])
 
             decryption_frequencies_map = decryptCaesarCipher(
-                len(kingdom_animal_map[kingdom]),
-                message)
+                len(kingdom_animal_map[kingdom]), message)
 
-            if(isCaptureSuccessful(character_frequencies_map[kingdom], decryption_frequencies_map)):
+            if(isCaptureSuccessful(character_frequencies_map[kingdom],
+                                   decryption_frequencies_map)):
                 kingdoms_captured.append(kingdom)
-                if(len(kingdoms_captured) == 3):
-                    break
 
-        if(len(kingdoms_captured) == 3):
+        if(len(kingdoms_captured) >= MIN_REQUIRED_TO_BE_RULER):
             kingdoms_captured.insert(0, "SPACE")
 
         else:
