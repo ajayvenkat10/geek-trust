@@ -1,6 +1,4 @@
 from Kingdom import *
-from collections import defaultdict
-
 
 class GoldenCrown:
 

@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 from GoldenCrown import *
 
 MIN_REQUIRED_TO_BE_RULER = 3
