@@ -7,13 +7,13 @@ class Kingdom:
 
         self.name = name
         self.animal = animal
-        self.animal_frequency_map = self.calculateFrequencyMap(animal)
+        self.animal_frequency_map = self.calculateFrequencyMap()
 
-    def calculateFrequencyMap(self, animal):
+    def calculateFrequencyMap(self):
 
         frequency_map = defaultdict(int)
 
-        for letter in animal:
+        for letter in self.animal:
             frequency_map[letter] += 1
 
         return frequency_map
