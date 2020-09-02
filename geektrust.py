@@ -1,67 +1,77 @@
 import sys
 from collections import defaultdict
 
-NUMBER_OF_ALPHABETS = 26
-ASCII_VAL_OF_A = 65
 MIN_REQUIRED_TO_BE_RULER = 3
 
-kingdom_animal_map = {"SPACE": "GORILLA",
-                      "LAND": "PANDA",
-                      "WATER": "OCTOPUS",
-                      "ICE": "MAMMOTH",
-                      "AIR": "OWL",
-                      "FIRE": "DRAGON"}
 
-character_frequencies_map = defaultdict(dict)
+class GoldenCrown:
 
+    NUMBER_OF_ALPHABETS = 26
+    ASCII_VAL_OF_A = 65
 
-def calculateFrequencyMap(animal):
+    kingdom_animal_map = {"SPACE": "GORILLA",
+                          "LAND": "PANDA",
+                          "WATER": "OCTOPUS",
+                          "ICE": "MAMMOTH",
+                          "AIR": "OWL",
+                          "FIRE": "DRAGON"}
 
-    frequency_map = defaultdict(int)
+    character_frequencies_map = defaultdict(dict)
 
-    for letter in animal:
-        frequency_map[letter] += 1
+    def __init__(self):
+        self.obtainAnimalCharacterFrequencies()
 
-    return frequency_map
+    def calculateFrequencyMap(self, animal):
 
+        frequency_map = defaultdict(int)
 
-def obtainAnimalCharacterFrequencies():
+        for letter in animal:
+            frequency_map[letter] += 1
 
-    for kingdom in kingdom_animal_map:
-        character_frequencies_map[kingdom] = calculateFrequencyMap(
-            kingdom_animal_map[kingdom])
+        return frequency_map
 
+    def obtainAnimalCharacterFrequencies(self):
 
-def decryptLetter(letter, key):
+        for kingdom in self.kingdom_animal_map:
+            self.character_frequencies_map[kingdom] = self.calculateFrequencyMap(
+                self.kingdom_animal_map[kingdom])
 
-    return chr(((ord(letter) - key - ASCII_VAL_OF_A) % NUMBER_OF_ALPHABETS) + ASCII_VAL_OF_A)
+    def decryptLetter(self, letter, key):
 
+        return chr(((ord(letter) - key - self.ASCII_VAL_OF_A) %
+                    self.NUMBER_OF_ALPHABETS) + self.ASCII_VAL_OF_A)
 
-def decryptCaesarCipher(key, ciphertext):
+    def decryptCaesarCipher(self, key, ciphertext):
 
-    plaintext = ""
-    frequency_dict = defaultdict(int)
+        plaintext = ""
+        frequency_dict = defaultdict(int)
 
-    for letter in ciphertext:
-        intended_letter = decryptLetter(letter, key)
-        frequency_dict[intended_letter] += 1
-        plaintext += intended_letter
+        for letter in ciphertext:
+            intended_letter = self.decryptLetter(letter, key)
+            frequency_dict[intended_letter] += 1
+            plaintext += intended_letter
 
-    return frequency_dict
+        return frequency_dict
 
+    def isCaptureSuccessful(self, kingdom, message):
 
-def isCaptureSuccessful(kingdom_frequency_map, decrypted_frequency_map):
+        decrypted_frequency_map = self.decryptCaesarCipher(
+            len(self.kingdom_animal_map[kingdom]), message)
 
-    for char in kingdom_frequency_map:
-        if(decrypted_frequency_map[char] < kingdom_frequency_map[char]):
-            return False
+        kingdom_frequency_map = self.character_frequencies_map[kingdom]
 
-    return True
+        for char in kingdom_frequency_map:
+            if(decrypted_frequency_map[char] < kingdom_frequency_map[char]):
+                return False
+
+        return True
 
 
 def solveGoldenCrown(input_file):
 
     kingdoms_captured = []
+
+    goldenCrown = GoldenCrown()
 
     with open(input_file) as in_file:
         inputs = in_file.readlines()
@@ -71,11 +81,7 @@ def solveGoldenCrown(input_file):
             kingdom = input[0]
             message = ''.join(input[1:])
 
-            decryption_frequencies_map = decryptCaesarCipher(
-                len(kingdom_animal_map[kingdom]), message)
-
-            if(isCaptureSuccessful(character_frequencies_map[kingdom],
-                                   decryption_frequencies_map)):
+            if(goldenCrown.isCaptureSuccessful(kingdom, message)):
                 kingdoms_captured.append(kingdom)
 
         if(len(kingdoms_captured) >= MIN_REQUIRED_TO_BE_RULER):
@@ -91,7 +97,6 @@ def solveGoldenCrown(input_file):
 
 def main():
 
-    obtainAnimalCharacterFrequencies()
     solveGoldenCrown(sys.argv[1])
 
 
