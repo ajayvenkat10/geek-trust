@@ -1,45 +1,54 @@
 import sys
-from GoldenCrown import *
+from King import *
+from Kingdom import *
 
-MIN_REQUIRED_TO_BE_RULER = 3
-RULER = "SPACE"
 
-def solveGoldenCrown(input_file):
+def calculateNameObjectMap(kingdom_animal_list):
 
-    kingdoms_list = ["SPACE", "LAND", "WATER", "ICE", "AIR", "FIRE"]
-    animals_list = ["GORILLA", "PANDA",
-                    "OCTOPUS", "MAMMOTH", "OWL", "DRAGON"]
-    
-    goldenCrown = GoldenCrown(kingdoms_list, animals_list)
+    name_object_map = defaultdict(Kingdom)
+    for i in range(len(kingdom_animal_list)):
+        kingdom = Kingdom(kingdom_animal_list[i][0], kingdom_animal_list[i][1])
+        name_object_map[kingdom.name] = kingdom
 
-    kingdoms_captured = []
+    return name_object_map
+
+
+def solveGoldenCrown(inputs, king, kingdom_name_object_map):
+
+    for input in inputs:
+        input = input.split()
+        kingdom = kingdom_name_object_map[input[0]]
+        message = ''.join(input[1:])
+
+        if(kingdom.isCaptureSuccessful(message, king.cipher)):
+            king.addKingdom(kingdom.name)
+
+    return king.kingdomsRuled()
+
+
+def inputOutput(input_file):
+
+    kingdom_animal_list = [("SPACE", "GORILLA"), ("LAND", "PANDA"), ("WATER", "OCTOPUS"), ("ICE", "MAMMOTH"),
+                           ("AIR", "OWL"), ("FIRE", "DRAGON")]
+
+    king = King("Shan", "SPACE", CaesarCipher(), 3)
+
+    kingdom_name_object_map = calculateNameObjectMap(kingdom_animal_list)
 
     with open(input_file) as in_file:
         inputs = in_file.readlines()
 
-        for input in inputs:
-            input = input.split()
-            kingdom_name = input[0]
-            message = ''.join(input[1:])
-
-            if(goldenCrown.isCaptureSuccessful(kingdom_name, message)):
-                kingdoms_captured.append(kingdom_name)
+        kingdoms_captured = solveGoldenCrown(
+            inputs, king, kingdom_name_object_map)
 
     in_file.close()
 
-    if(len(kingdoms_captured) >= MIN_REQUIRED_TO_BE_RULER):
-        kingdoms_captured.insert(0, RULER)
+    print(* kingdoms_captured)
 
-    else:
-        kingdoms_captured = ["NONE"]
-
-    return kingdoms_captured
 
 def main():
 
-    ruled_kingdoms = solveGoldenCrown(sys.argv[1])
-
-    print(* ruled_kingdoms)
+    inputOutput(sys.argv[1])
 
 
 if __name__ == "__main__":
